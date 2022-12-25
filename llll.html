@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+        <style>
+            body {
+                width: 100%;
+                height: 100%;
+                background-color: black;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                /* background-color: black; */
+            }
+
+            .ball {
+                position: absolute;
+                border-radius: 50%;
+            }
+        </style>
+
+        <script>
+            // 鼠标移动
+            //创建小球类
+            function Ball(x, y) {
+                //x,y表示圆心
+                this.x = x;
+                this.y = y;
+                this.r = 7;
+                this.opacity = 1;
+                this.color =
+                    colorArr[parseInt(Math.random() * colorArr.length)];
+
+                // 这个小球的x增量和y的增量，使用do while语句，可以防止dX和dY都是零
+                do {
+                    this.dX = parseInt(Math.random() * 8) - 5;
+                    this.dY = -(parseInt(Math.random() * 8) - 5);
+                } while ((this.dX == 0) & (this.dY == 0));
+
+                //初始化
+                this.init();
+                ballArr.push(this);
+            }
+
+            //初始化方法
+            Ball.prototype.init = function () {
+                //创建自己的dom
+                this.dom = document.createElement("div");
+                this.dom.className = "ball";
+                this.dom.style.width = this.r * 2 + "px";
+                this.dom.style.height = this.r * 2 + "px";
+                this.dom.style.left = this.x - this.r + "px";
+                this.dom.style.top = this.y - this.r + "px";
+                this.dom.style.backgroundColor = this.color;
+                //孤儿节点需要上树
+                document.body.appendChild(this.dom);
+            };
+            //更新
+            Ball.prototype.update = function () {
+                //位置改变
+                this.x += this.dX;
+                this.y += this.dY;
+                //半径改变
+                this.r += 0.2;
+                //透明度改变
+                this.opacity -= 0.02;
+                this.dom.style.width = this.r * 2 + "px";
+                this.dom.style.height = this.r * 2 + "px";
+                this.dom.style.left = this.x - this.r + "px";
+                this.dom.style.top = this.y - this.r + "px";
+                this.dom.style.opacity = this.opacity;
+
+                //防止大量内存占用！小球需要检索并删除！
+                // 当透明度小于0的时候，就需要从数组中删除自己，DOM元素也要删掉自己
+                if (this.opacity < 0) {
+                    // 从数组中删除自己
+                    for (var i = 0; i < ballArr.length; i++) {
+                        if (ballArr[i] == this) {
+                            ballArr.splice(i, 1);
+                        }
+                    }
+                    // 还要删除自己的dom
+                    document.body.removeChild(this.dom);
+                }
+            };
+
+            // 把所有的小球实例都放到一个数组中
+            var ballArr = [];
+
+            // 初始颜色数组
+            var colorArr = [
+                "#66CCCC",
+                "#CCFF66",
+                "#FF99CC",
+                "#FF6666",
+                "#CC3399",
+                "#FF6600",
+            ];
+
+            // 定时器，负责更新所有的小球实例
+            setInterval(function () {
+                // 遍历数组，调用调用的update方法
+                for (var i = 0; i < ballArr.length; i++) {
+                    ballArr[i].update();
+                }
+            }, 20);
+
+            // 鼠标指针的监听
+            document.onmousemove = function (e) {
+                // 得到鼠标指针的位置
+                var x = e.clientX;
+                var y = e.clientY;
+
+                new Ball(x, y);
+            };
+        </script>
+
+        <script>
+            jQuery(function () {
+                $("html").click(function (e) {
+                    var a_idx = Math.floor(Math.random() * 15);
+                    var a = new Array(
+                        "❤吴琪~❤",
+                        "❤11月12日❤",
+                        "❤6月7日❤",
+                        "❤爱你呦❤",
+                        "❤武器❤",
+                        "❤想你了！❤",
+                        "❤亲亲3❤",
+                        "❤你在干嘛嘞~❤",
+                        "❤有没有想我~❤",
+                        "❤么么么~❤",
+                        "❤爱你！❤",
+                        "❤来克油~❤",
+                        "❤LOVE❤",
+                        "❤吴琪~❤",
+                        "❤吴琪~❤"
+                    );
+
+                    var color1 = Math.floor(Math.random() * 255);
+                    var color2 = Math.floor(Math.random() * 255);
+                    var color3 = Math.floor(Math.random() * 255);
+
+                    var $i = $("<span />").text(a[a_idx]);
+                    a_idx = (a_idx + 1) % a.length;
+                    var x = e.pageX,
+                        y = e.pageY;
+                    $i.css({
+                        "z-index": 9999999999999,
+                        top: y - 20,
+                        left: x,
+                        position: "absolute",
+                        "font-family": "mmm",
+                        fontSize: Math.floor(Math.random() * 10 + 20),
+                        "font-weight": "bold",
+                        color:
+                            "rgb(" + color1 + "," + color2 + "," + color3 + ")",
+                        "-webkit-user-select": "none",
+                        "-moz-user-select": "none",
+                        "-ms-user-select": "none",
+                        "user-select": "none",
+                    });
+                    $("body").append($i);
+                    $i.animate(
+                        {
+                            top: y - 200,
+                            opacity: 0,
+                        },
+                        1000,
+                        function () {
+                            $i.remove();
+                        }
+                    );
+                });
+            });
+        </script>
+    </head>
+
+    <body class="body">
+        <script>
+            function clickEffect() {
+                let balls = [];
+                let longPressed = false;
+                let longPress;
+                let multiplier = 0;
+                let width, height;
+                let origin;
+                let normal;
+                let ctx;
+                const colours = [
+                    "#F73859",
+                    "#14FFEC",
+                    "#00E0FF",
+                    "#FF99FE",
+                    "#FAF15D",
+                ];
+                const canvas = document.createElement("canvas");
+                document.body.appendChild(canvas);
+                canvas.setAttribute(
+                    "style",
+                    "width: 100%; height: 100%; top: 0; left: 0; z-index: 99999; position: fixed; pointer-events: none;"
+                );
+                const pointer = document.createElement("span");
+                pointer.classList.add("pointer");
+                document.body.appendChild(pointer);
+
+                if (canvas.getContext && window.addEventListener) {
+                    ctx = canvas.getContext("2d");
+                    updateSize();
+                    window.addEventListener("resize", updateSize, false);
+                    loop();
+                    window.addEventListener(
+                        "mousedown",
+                        function (e) {
+                            pushBalls(
+                                randBetween(10, 20),
+                                e.clientX,
+                                e.clientY
+                            );
+                            document.body.classList.add("is-pressed");
+                            longPress = setTimeout(function () {
+                                document.body.classList.add("is-longpress");
+                                longPressed = true;
+                            }, 500);
+                        },
+                        false
+                    );
+                    window.addEventListener(
+                        "mouseup",
+                        function (e) {
+                            clearInterval(longPress);
+                            if (longPressed == true) {
+                                document.body.classList.remove("is-longpress");
+                                pushBalls(
+                                    randBetween(
+                                        50 + Math.ceil(multiplier),
+                                        100 + Math.ceil(multiplier)
+                                    ),
+                                    e.clientX,
+                                    e.clientY
+                                );
+                                longPressed = false;
+                            }
+                            document.body.classList.remove("is-pressed");
+                        },
+                        false
+                    );
+                    window.addEventListener(
+                        "mousemove",
+                        function (e) {
+                            let x = e.clientX;
+                            let y = e.clientY;
+                            pointer.style.top = y + "px";
+                            pointer.style.left = x + "px";
+                        },
+                        false
+                    );
+                } else {
+                    console.log("canvas or addEventListener is unsupported!");
+                }
+
+                function updateSize() {
+                    canvas.width = window.innerWidth * 2;
+                    canvas.height = window.innerHeight * 2;
+                    canvas.style.width = window.innerWidth + "px";
+                    canvas.style.height = window.innerHeight + "px";
+                    ctx.scale(2, 2);
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
+                    origin = {
+                        x: width / 2,
+                        y: height / 2,
+                    };
+                    normal = {
+                        x: width / 2,
+                        y: height / 2,
+                    };
+                }
+                class Ball1 {
+                    constructor(x = origin.x, y = origin.y) {
+                        this.x = x;
+                        this.y = y;
+                        this.angle = Math.PI * 2 * Math.random();
+                        if (longPressed == true) {
+                            this.multiplier = randBetween(
+                                14 + multiplier,
+                                15 + multiplier
+                            );
+                        } else {
+                            this.multiplier = randBetween(6, 12);
+                        }
+                        this.vx =
+                            (this.multiplier + Math.random() * 0.5) *
+                            Math.cos(this.angle);
+                        this.vy =
+                            (this.multiplier + Math.random() * 0.5) *
+                            Math.sin(this.angle);
+                        this.r = randBetween(8, 12) + 3 * Math.random();
+                        this.color =
+                            colours[Math.floor(Math.random() * colours.length)];
+                    }
+                    update() {
+                        this.x += this.vx - normal.x;
+                        this.y += this.vy - normal.y;
+                        normal.x =
+                            (-2 / window.innerWidth) * Math.sin(this.angle);
+                        normal.y =
+                            (-2 / window.innerHeight) * Math.cos(this.angle);
+                        this.r -= 0.3;
+                        this.vx *= 0.9;
+                        this.vy *= 0.9;
+                    }
+                }
+
+                function pushBalls(count = 1, x = origin.x, y = origin.y) {
+                    for (let i = 0; i < count; i++) {
+                        balls.push(new Ball1(x, y));
+                    }
+                }
+
+                function randBetween(min, max) {
+                    return Math.floor(Math.random() * max) + min;
+                }
+
+                function loop() {
+                    ctx.fillStyle = "rgba(255, 255, 255, 0)";
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (let i = 0; i < balls.length; i++) {
+                        let b = balls[i];
+                        if (b.r < 0) continue;
+                        ctx.fillStyle = b.color;
+                        ctx.beginPath();
+                        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2, false);
+                        ctx.fill();
+                        b.update();
+                    }
+                    if (longPressed == true) {
+                        multiplier += 0.2;
+                    } else if (!longPressed && multiplier >= 0) {
+                        multiplier -= 0.4;
+                    }
+                    removeBall();
+                    requestAnimationFrame(loop);
+                }
+
+                function removeBall() {
+                    for (let i = 0; i < balls.length; i++) {
+                        let b = balls[i];
+                        if (
+                            b.x + b.r < 0 ||
+                            b.x - b.r > width ||
+                            b.y + b.r < 0 ||
+                            b.y - b.r > height ||
+                            b.r < 0
+                        ) {
+                            balls.splice(i, 1);
+                        }
+                    }
+                }
+            }
+            clickEffect(); //调用
+        </script>
+    </body>
+</html>
